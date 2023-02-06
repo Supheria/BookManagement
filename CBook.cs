@@ -9,7 +9,7 @@ namespace BookManagement
     /// <summary>
     /// 图书类
     /// </summary>
-    internal class CBook
+    public class CBook
     {
         /// <summary>
         /// 书名
@@ -22,7 +22,7 @@ namespace BookManagement
         /// <summary>
         /// 定价
         /// </summary>
-        public int mOrnPrice { get; private set; }
+        public int mOriginalPrice { get; private set; }
         /// <summary>
         /// 入库时间
         /// </summary>
@@ -31,6 +31,30 @@ namespace BookManagement
         /// 出库时间
         /// </summary>
         public string? mSellTime { get; private set; }
+        /// <summary>
+        /// 代购索引
+        /// </summary>
+        public int mIndexOfOnBehalf { get; private set; }
+        /// <summary>
+        /// 系列索引
+        /// </summary>
+        public int mIndexInSeries { get; private set; }
+        public CBook(
+            string name,
+            eEdition edit,
+            int originalPrice,
+            string addTime,
+            int indexOfOnBehalf, 
+            int indexInSeries = 0)
+        {
+            mName = name;
+            mEdit = edit;
+            mOriginalPrice = originalPrice;
+            mAddTime = addTime;
+            mSellTime = null;
+            mIndexOfOnBehalf = indexOfOnBehalf;
+            mIndexInSeries = indexInSeries;
+        }
     }
     /// <summary>
     /// 版本

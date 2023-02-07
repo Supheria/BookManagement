@@ -29,7 +29,6 @@
         private void InitializeComponent()
         {
             this.lstvSeriesList = new System.Windows.Forms.ListView();
-            this.index = new System.Windows.Forms.ColumnHeader();
             this.seriesName = new System.Windows.Forms.ColumnHeader();
             this.editionNumber = new System.Windows.Forms.ColumnHeader();
             this.SuspendLayout();
@@ -37,24 +36,21 @@
             // lstvSeriesList
             // 
             this.lstvSeriesList.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
-            this.index,
             this.seriesName,
             this.editionNumber});
+            this.lstvSeriesList.FullRowSelect = true;
             this.lstvSeriesList.GridLines = true;
             this.lstvSeriesList.Location = new System.Drawing.Point(0, 0);
+            this.lstvSeriesList.MultiSelect = false;
             this.lstvSeriesList.Name = "lstvSeriesList";
             this.lstvSeriesList.Size = new System.Drawing.Size(546, 217);
             this.lstvSeriesList.TabIndex = 0;
             this.lstvSeriesList.UseCompatibleStateImageBehavior = false;
             this.lstvSeriesList.View = System.Windows.Forms.View.Details;
             // 
-            // index
-            // 
-            this.index.Text = "序号";
-            // 
             // seriesName
             // 
-            this.seriesName.Text = "系列名";
+            this.seriesName.Text = "套装名称";
             // 
             // editionNumber
             // 
@@ -75,7 +71,6 @@
         #endregion
 
         private ListView lstvSeriesList;
-        private ColumnHeader index;
         private ColumnHeader seriesName;
         private ColumnHeader editionNumber;
     }

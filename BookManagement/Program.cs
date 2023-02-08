@@ -15,10 +15,7 @@ internal static class Program
     {
         Application.EnableVisualStyles();
         Application.SetCompatibleTextRenderingDefault(false);
-        BooksForm booksForm = new BooksForm();
-        test();
-        booksForm.InitializeList(storage);
-        Application.Run(booksForm);
+        Application.Run(new StorageForm());
         
     }
 
@@ -40,40 +37,7 @@ internal static class Program
         //FileStream stream = new FileStream("hh.xml", FileMode.Create);
         //SerializeToXml(stream);
         //stream.Close();
-        DeserializeFromXml();
-    }
-    public static void SerializeToXml(FileStream stream)
-    {
-        XmlSerializer serializer = new XmlSerializer(storage.GetType());
-        XmlWriterSettings settings = new XmlWriterSettings();
-        settings.Indent = true;
-        settings.IndentChars = "    ";
-        settings.NewLineChars = Environment.NewLine;
-        settings.Encoding = Encoding.UTF8;
-        //settings.OmitXmlDeclaration = true;  // 不生成声明头
-
-        using (XmlWriter xmlWriter = XmlWriter.Create(stream, settings))
-        {
-            // 强制指定命名空间，覆盖默认的命名空间
-            XmlSerializerNamespaces namespaces = new XmlSerializerNamespaces();
-            namespaces.Add(string.Empty, string.Empty);
-            serializer.Serialize(new XmlWriterForceFullEnd(xmlWriter), storage, namespaces);
-            xmlWriter.Close();
-        }
-    }
-
-    public static void DeserializeFromXml()
-    {
-        FileStream fs = File.Open("file.xml", FileMode.Open);
-        using (StreamReader sr = new StreamReader(fs, Encoding.UTF8))
-        {
-            XmlSerializer xz = new XmlSerializer(typeof(CBookStorage));
-            storage = (CBookStorage)xz.Deserialize(sr);
-        }
-    }
-
-    public sealed class Utf8Writer : StringWriter
-    {
-        public override Encoding Encoding => Encoding.UTF8;
+        //FileStream stream = File.Open("file.xml", FileMode.Open);
+        //DeserializeFromXml(stream);
     }
 }

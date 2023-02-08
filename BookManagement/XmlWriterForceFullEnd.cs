@@ -8,11 +8,6 @@ using System.Xml;
 
 namespace BookManagement
 {
-    public class xml
-    {
-        
-    }
-    
     public class XmlWriterForceFullEnd : XmlWriter
     {
         private readonly XmlWriter _baseWriter;

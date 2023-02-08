@@ -8,4 +8,8 @@
     <UseWindowsForms>true</UseWindowsForms>
   </PropertyGroup>
 
+  <ItemGroup>
+    <Compile Remove="ListViewCombo.cs" />
+  </ItemGroup>
+
 </Project>

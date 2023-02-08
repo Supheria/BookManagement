@@ -1,12 +1,24 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Forms;
 using System.Xml.Serialization;
 
 namespace BookManagement
 {
+    public partial class BookForm : Form
+    {
+        public CBook mBook;
+        public BookForm()
+        {
+            InitializeComponent();
+        }
+    }
     /// <summary>
     /// 图书类
     /// </summary>
@@ -17,7 +29,7 @@ namespace BookManagement
         /// </summary>
         int mIndexInSeries = 0;
         [XmlElement("series-index")]
-        public int _indexInSeries
+        public int IndexInSeries
         {
             get { return mIndexInSeries; }
             set { mIndexInSeries = value; }
@@ -27,7 +39,7 @@ namespace BookManagement
         /// </summary>
         eEdition mEdition;
         [XmlElement("edition")]
-        public eEdition _edition
+        public eEdition Edition
         {
             get { return mEdition; }
             set { mEdition = value; }
@@ -37,57 +49,59 @@ namespace BookManagement
         /// </summary>
         int mOriginalPrice;
         [XmlElement("original-price")]
-        public int _originalPrice
+        public int OriginalPrice
         {
             get { return mOriginalPrice; }
             set { mOriginalPrice = value; }
         }
         /// <summary>
-        /// 入库时间
+        /// 购买日期
         /// </summary>
-        string mAddTime;
+        string mBoughtDate;
         [XmlElement("add-time")]
-        public string _addTime
+        public string BoughtDate
         {
-            get { return mAddTime; }
-            set { mAddTime = value; }
+            get { return mBoughtDate; }
+            set { mBoughtDate = value; }
         }
         /// <summary>
-        /// 出库时间
+        /// 出售日期
         /// </summary>
-        string mSoldTime = string.Empty;
+        string mSoldDate = string.Empty;
         [XmlElement("sold-time")]
-        public string _soldTime
+        public string SoldDate
         {
-            get { return mSoldTime; }
-            set { mSoldTime = value; }
+            get { return mSoldDate; }
+            set { mSoldDate = value; }
         }
         /// <summary>
         /// 出售价格
         /// </summary>
         double mSoldPrice = -1f;
         [XmlElement("sold-price")]
-        public double _soldPrice
+        public double SoldPrice
         {
             get { return mSoldPrice; }
-            set
-            {
-                mSoldPrice = value;
-                mSoldTime = System.DateTime.Now.ToString("f");
-            }
+            set { mSoldPrice = value; }
         }
         /// <summary>
         /// 代购索引
         /// </summary>
         int mIndexOfOnBehalf;
         [XmlElement("behalf-index")]
-        public int _indexOfOnBehalf
+        public int IndexOfOnBehalf
         {
             get { return mIndexOfOnBehalf; }
-            set
-            {
-                mIndexOfOnBehalf = value;
-            }
+            set { mIndexOfOnBehalf = value; }
+        }
+        /// <summary>
+        /// 运费
+        /// </summary>
+        int mFreight;
+        public int Freight
+        {
+            get { return mFreight; }
+            set { mFreight = value; }
         }
         public CBook() { }
         /// <summary>
@@ -95,21 +109,20 @@ namespace BookManagement
         /// </summary>
         /// <param name="edition">版本类型</param>
         /// <param name="originalPrice">定价</param>
-        /// <param name="addTime">入库时间</param>
+        /// <param name="boughtDate">添加时间</param>
         /// <param name="indexOfOnBehalf">代购索引</param>
         /// <param name="indexInSeries">在套装中的序号，默认为0</param>
-        /// <param name="soldPrice">出售价格，默认为-1</param>
         public CBook(
             eEdition edition,
             int originalPrice,
-            string addTime,
+            string boughtDate,
             int indexOfOnBehalf,
-            int indexInSeries
+            int indexInSeries = 0
             )
         {
             mEdition = edition;
             mOriginalPrice = originalPrice;
-            mAddTime = addTime;
+            mBoughtDate = boughtDate;
             mIndexOfOnBehalf = indexOfOnBehalf;
             mIndexInSeries = indexInSeries;
         }

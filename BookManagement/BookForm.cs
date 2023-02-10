@@ -26,8 +26,16 @@ namespace BookManagement
         {
             InitializeComponent();
             mSeriesForm = seriesForm;
-            mDoSell = DoSell;
             mBook = book;
+            if (!DoSell)
+            {
+                txtSoldPrice.Visible = false;
+                dtpSoldDate.Visible = false;
+                lbeSoldPrice.Visible = false;
+                lbeSoldDate.Visible = false;
+                btnSave.Location = new Point(btnSave.Location.X, btnSave.Location.Y - (dtpSoldDate.Bottom - txtFreight.Bottom));
+                this.Height = this.Height - (dtpSoldDate.Bottom - txtFreight.Bottom);
+            }
         }
 
         private void btnSave_Click(object sender, EventArgs e)
@@ -37,21 +45,87 @@ namespace BookManagement
             {
                 mBook = new CBook(
                     txtSeriesIndex.Text,
-                    cbbEdition.SelectedIndex,
+                    EditionKeyIndex[cbbEdition.SelectedIndex],
                     txtOriginalPrice.Text,
                     dtpBoughtDate.Text,
-                    cbbOnBehalf.SelectedIndex,
+                    OnBehalfKeyIndex[cbbOnBehalf.SelectedIndex],
                     txtFreight.Text,
                     mDoSell == true ? txtSoldPrice.Text : "",
                     mDoSell == true ? dtpSoldDate.Text : ""
-                    );
+                    ); ;
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"{ex.Message}\n无法添加书目");
+                if(ex.Message == "The given key '-1' was not present in the dictionary.")
+                {
+                    MessageBox.Show(cbbEdition.SelectedIndex == -1 ? "没有选择版本！" : cbbOnBehalf.SelectedIndex == -1 ? "没有选择代购！" : ex.Message);
+                }
+                else
+                    MessageBox.Show($"{ex.Message}");
                 return;
             }
             mSeriesForm.AddListView(mBook);
+        }
+        public static Dictionary<int, string> EditionKeyIndex = new Dictionary<int, string>
+        {
+            { 0, "首刷" },
+            { 1, "首刷限定" },
+            { 2, "首刷+书腰" },
+            { 3, "再版" },
+            { 4, "特别版" }
+        };
+        public static Dictionary<string, int> EditionKeyName = new Dictionary<string, int>
+        {
+            { "首刷", 0},
+            { "首刷限定", 1},
+            { "首刷+书腰", 2},
+            { "再版", 3 },
+            { "特别版", 4 }
+        };
+        public static Dictionary<int, string> OnBehalfKeyIndex = new Dictionary<int, string>
+        {
+            { 0, "代购一" },
+            { 1, "代购二" },
+            { 2, "代购三" }
+        };
+        public static Dictionary<string, int> OnBehalfKeyName = new Dictionary<string, int>
+        {
+            { "代购一", 0 },
+            { "代购二", 1 },
+            { "代购三", 2 }
+        };
+
+        private void txtSeriesIndex_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            // e.KeyChar == (char)8 是退格键
+            if (!(char.IsNumber(e.KeyChar) || e.KeyChar == (char)8))
+            {
+                e.Handled = true;
+            }
+        }
+
+        private void txtOriginalPrice_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            if (!(char.IsNumber(e.KeyChar) || e.KeyChar == (char)8))
+            {
+                e.Handled = true;
+            }
+        }
+
+        private void txtFreight_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            if (!(char.IsNumber(e.KeyChar) || e.KeyChar == (char)8))
+            {
+                e.Handled = true;
+            }
+        }
+
+        private void txtSoldPrice_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            if (!(char.IsNumber(e.KeyChar) || e.KeyChar == (char)8))
+            {
+                e.Handled = true;
+            }
         }
     }
     /// <summary>
@@ -74,13 +148,12 @@ namespace BookManagement
         /// </summary>
         string mEdition = string.Empty;
         [XmlElement("edition")]
-        public int EditionIndex
+        public string Edition
         {
-            get { return EditionKeyName[mEdition]; }
+            get { return mEdition; }
             set
             {
-                mEdition = value == -1 ? throw new Exception("没有选择版本！") : EditionKeyIndex[value];
-                UpdateData();
+                mEdition = value;
             }
         }
         /// <summary>
@@ -112,23 +185,23 @@ namespace BookManagement
             }
         }
         /// <summary>
-        /// 代购索引
+        /// 代购
         /// </summary>
         string mOnBehalf = string.Empty;
-        [XmlElement("on-behalf-index")]
-        public int OnBehalfIndex
+        [XmlElement("on-behalf")]
+        public string OnBehalf
         {
-            get { return OnBehalfKeyName[mOnBehalf]; }
+            get { return mOnBehalf; }
             set
             {
-                mOnBehalf = value == -1 ? throw new Exception("没有选择代购！") : OnBehalfKeyIndex[value];
+                mOnBehalf = value;
                 UpdateData();
             }
         }
         /// <summary>
         /// 邮费
         /// </summary>
-        string mFreight = "0";
+        string mFreight = "1";
         [XmlElement("freight")]
         public string Freight
         {
@@ -149,7 +222,7 @@ namespace BookManagement
             get { return mSoldPrice; }
             set
             {
-                mSoldPrice = value == string.Empty ? throw new Exception("售价不能为空！") : value;
+                mSoldPrice = value;
                 UpdateData();
             }
         }
@@ -172,22 +245,22 @@ namespace BookManagement
         public CBook() { }
         public CBook(
             string seriesIndex,
-            int editionIndex,
+            string edition,
             string originalPrice,
             string boughtDate,
-            int onBehalfIndex,
+            string onBehalf,
             string freight,
             string soldPrice,
             string soldDate
             )
         {
             SeriesIndex = seriesIndex.Trim();
-            EditionIndex = editionIndex;
+            Edition = edition.Trim();
             OriginalPrice = originalPrice.Trim();
             BoughtDate = boughtDate.Trim();
-            OnBehalfIndex = onBehalfIndex;
+            OnBehalf = onBehalf.Trim();
             Freight = freight.Trim();
-            soldPrice = soldPrice.Trim();
+            SoldPrice = soldPrice.Trim();
             SoldDate = soldDate.Trim();
         }
         private void UpdateData()
@@ -203,33 +276,6 @@ namespace BookManagement
                 mSoldDate
             };
         }
-        public static Dictionary<int, string> EditionKeyIndex = new Dictionary<int, string>
-        {
-            { 0, "首刷" },
-            { 1, "首刷限定" },
-            { 2, "首刷+书腰" },
-            { 3, "再版" },
-            { 4, "特别版" }
-        };
-        public static Dictionary<string, int> EditionKeyName = new Dictionary<string, int>
-        {
-            { "首刷", 0},
-            { "首刷限定", 1},
-            { "首刷+书腰", 2},
-            { "再版", 3 },
-            { "特别版", 4 }
-        };
-        public static Dictionary<int, string> OnBehalfKeyIndex = new Dictionary<int, string>
-        {
-            { 0, "代购一" },
-            { 1, "代购二" },
-            { 2, "代购三" }
-        };
-        public static Dictionary<string, int> OnBehalfKeyName = new Dictionary<string, int>
-        {
-            { "代购一", 0 },
-            { "代购二", 1 },
-            { "代购三", 2 }
-        };
+        
     }
 }

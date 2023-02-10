@@ -58,11 +58,10 @@
             this.totalCost});
             this.lstvBooks.FullRowSelect = true;
             this.lstvBooks.GridLines = true;
-            this.lstvBooks.Location = new System.Drawing.Point(15, 78);
-            this.lstvBooks.Margin = new System.Windows.Forms.Padding(6, 5, 6, 5);
+            this.lstvBooks.Location = new System.Drawing.Point(12, 47);
             this.lstvBooks.MultiSelect = false;
             this.lstvBooks.Name = "lstvBooks";
-            this.lstvBooks.Size = new System.Drawing.Size(1075, 395);
+            this.lstvBooks.Size = new System.Drawing.Size(571, 237);
             this.lstvBooks.TabIndex = 0;
             this.lstvBooks.UseCompatibleStateImageBehavior = false;
             this.lstvBooks.View = System.Windows.Forms.View.Details;
@@ -71,57 +70,47 @@
             // SeriesIndex
             // 
             this.SeriesIndex.Text = "系列序号";
-            this.SeriesIndex.Width = 96;
             // 
             // edition
             // 
             this.edition.Text = "版本";
-            this.edition.Width = 54;
             // 
             // originalPrice
             // 
             this.originalPrice.Text = "定价";
-            this.originalPrice.Width = 54;
             // 
             // BoughtDate
             // 
             this.BoughtDate.Text = "购买日期";
-            this.BoughtDate.Width = 96;
             // 
             // OnBehalf
             // 
             this.OnBehalf.Text = "代购";
-            this.OnBehalf.Width = 54;
             // 
             // freight
             // 
             this.freight.Text = "邮费";
-            this.freight.Width = 54;
             // 
             // soldPrice
             // 
             this.soldPrice.DisplayIndex = 7;
             this.soldPrice.Text = "出售价格";
-            this.soldPrice.Width = 96;
             // 
             // SoldDate
             // 
             this.SoldDate.DisplayIndex = 8;
             this.SoldDate.Text = "出售日期";
-            this.SoldDate.Width = 595;
             // 
             // totalCost
             // 
             this.totalCost.DisplayIndex = 6;
             this.totalCost.Text = "总成本";
-            this.totalCost.Width = 75;
             // 
             // btnAddRow
             // 
-            this.btnAddRow.Location = new System.Drawing.Point(719, 20);
-            this.btnAddRow.Margin = new System.Windows.Forms.Padding(6, 5, 6, 5);
+            this.btnAddRow.Location = new System.Drawing.Point(387, 12);
             this.btnAddRow.Name = "btnAddRow";
-            this.btnAddRow.Size = new System.Drawing.Size(111, 38);
+            this.btnAddRow.Size = new System.Drawing.Size(60, 23);
             this.btnAddRow.TabIndex = 1;
             this.btnAddRow.Text = "新增";
             this.btnAddRow.UseVisualStyleBackColor = true;
@@ -129,18 +118,16 @@
             // 
             // txtSeriesName
             // 
-            this.txtSeriesName.Location = new System.Drawing.Point(22, 20);
-            this.txtSeriesName.Margin = new System.Windows.Forms.Padding(6, 5, 6, 5);
+            this.txtSeriesName.Location = new System.Drawing.Point(12, 12);
             this.txtSeriesName.Name = "txtSeriesName";
-            this.txtSeriesName.Size = new System.Drawing.Size(570, 34);
+            this.txtSeriesName.Size = new System.Drawing.Size(309, 23);
             this.txtSeriesName.TabIndex = 2;
             // 
             // btnDelete
             // 
-            this.btnDelete.Location = new System.Drawing.Point(841, 20);
-            this.btnDelete.Margin = new System.Windows.Forms.Padding(6, 5, 6, 5);
+            this.btnDelete.Location = new System.Drawing.Point(453, 12);
             this.btnDelete.Name = "btnDelete";
-            this.btnDelete.Size = new System.Drawing.Size(111, 38);
+            this.btnDelete.Size = new System.Drawing.Size(60, 23);
             this.btnDelete.TabIndex = 3;
             this.btnDelete.Text = "删除";
             this.btnDelete.UseVisualStyleBackColor = true;
@@ -148,25 +135,23 @@
             // 
             // btnSell
             // 
-            this.btnSell.Location = new System.Drawing.Point(979, 18);
-            this.btnSell.Margin = new System.Windows.Forms.Padding(6, 5, 6, 5);
+            this.btnSell.Location = new System.Drawing.Point(527, 11);
             this.btnSell.Name = "btnSell";
-            this.btnSell.Size = new System.Drawing.Size(111, 38);
+            this.btnSell.Size = new System.Drawing.Size(60, 23);
             this.btnSell.TabIndex = 4;
             this.btnSell.Text = "出售";
             this.btnSell.UseVisualStyleBackColor = true;
             // 
             // SeriesForm
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(13F, 28F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 17F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1105, 487);
+            this.ClientSize = new System.Drawing.Size(595, 296);
             this.Controls.Add(this.btnSell);
             this.Controls.Add(this.btnDelete);
             this.Controls.Add(this.txtSeriesName);
             this.Controls.Add(this.btnAddRow);
             this.Controls.Add(this.lstvBooks);
-            this.Margin = new System.Windows.Forms.Padding(6, 5, 6, 5);
             this.Name = "SeriesForm";
             this.Text = "SeriesForm";
             this.SizeChanged += new System.EventHandler(this.SeriesForm_SizeChanged);

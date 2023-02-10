@@ -18,6 +18,13 @@ namespace BookManagement
         {
             InitializeComponent();
         }
+        private void setTag(Control parent)
+        {
+            foreach (Control child in parent.Controls)
+            {
+                child.Tag = child.Width + " " + child.Height + " " +
+            }
+        }
 
         public void AddListView(CBook book)
         {
@@ -41,9 +48,24 @@ namespace BookManagement
             lstvBooks.Update();
         }
 
+        public CBook ReadListView()
+        {
+            var item = lstvBooks.SelectedItems;
+            CBook book = new CBook();
+            return book;
+        }
+
         private void btnAddRow_Click(object sender, EventArgs e)
         {
-            BookForm form = new BookForm(this,BookForm.FormMode.ADD, new CBook());
+            BookForm form = new BookForm(this, new CBook());
+            form.txtSeriesIndex.Enabled = true;
+            form.cbbEdition.Enabled = true;
+            form.txtOriginalPrice.Enabled = true;
+            form.dtpBoughtDate.Enabled = true;
+            form.cbbOnBehalf.Enabled = true;
+            form.txtFreight.Enabled = true;
+            form.txtSoldPrice.Enabled = false;
+            form.dtpSoldDate.Enabled = false;
             form.Show();
         }
 
@@ -55,6 +77,18 @@ namespace BookManagement
         private void btnDelete_Click(object sender, EventArgs e)
         {
 
+        }
+
+        private void lstvBooks_DoubleClick(object sender, EventArgs e)
+        {
+
+        }
+
+        private void SeriesForm_SizeChanged(object sender, EventArgs e)
+        {
+
+            lstvBooks.Size = this.ClientSize;
+            this.Invalidate();
         }
     }
     /// <summary>

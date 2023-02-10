@@ -20,18 +20,19 @@ namespace BookManagement
             SELL
         }
         SeriesForm mSeriesForm;
-        FormMode mMode;
+        bool mDoSell;
         CBook mBook;
-        public BookForm(SeriesForm seriesForm, FormMode mode, CBook book)
+        public BookForm(SeriesForm seriesForm, CBook book, bool DoSell = false)
         {
             InitializeComponent();
             mSeriesForm = seriesForm;
-            mMode = mode;
+            mDoSell = DoSell;
             mBook = book;
         }
 
         private void btnSave_Click(object sender, EventArgs e)
         {
+
             try
             {
                 mBook = new CBook(
@@ -40,7 +41,9 @@ namespace BookManagement
                     txtOriginalPrice.Text,
                     dtpBoughtDate.Text,
                     cbbOnBehalf.SelectedIndex,
-                    txtFreight.Text
+                    txtFreight.Text,
+                    mDoSell == true ? txtSoldPrice.Text : "",
+                    mDoSell == true ? dtpSoldDate.Text : ""
                     );
             }
             catch (Exception ex)
@@ -71,13 +74,12 @@ namespace BookManagement
         /// </summary>
         string mEdition = string.Empty;
         [XmlElement("edition")]
-        public int Edition
+        public int EditionIndex
         {
-            get
-            { return EditionKeyName[mEdition]; }
+            get { return EditionKeyName[mEdition]; }
             set
             {
-                mEdition = value == -1 ? throw new Exception("没有选择版本！") : EditionsKeyIndex[value];
+                mEdition = value == -1 ? throw new Exception("没有选择版本！") : EditionKeyIndex[value];
                 UpdateData();
             }
         }
@@ -170,19 +172,23 @@ namespace BookManagement
         public CBook() { }
         public CBook(
             string seriesIndex,
-            int edition,
+            int editionIndex,
             string originalPrice,
             string boughtDate,
             int onBehalfIndex,
-            string freight
+            string freight,
+            string soldPrice,
+            string soldDate
             )
         {
             SeriesIndex = seriesIndex.Trim();
-            Edition = edition;
+            EditionIndex = editionIndex;
             OriginalPrice = originalPrice.Trim();
             BoughtDate = boughtDate.Trim();
-            OnBehalfIndex = onBehalfIndex.ToString();
+            OnBehalfIndex = onBehalfIndex;
             Freight = freight.Trim();
+            soldPrice = soldPrice.Trim();
+            SoldDate = soldDate.Trim();
         }
         private void UpdateData()
         {
@@ -191,39 +197,39 @@ namespace BookManagement
                 mEdition,
                 mOriginalPrice,
                 mBoughtDate,
-                mOnBehalfIndex,
-                mFreight
+                mOnBehalf,
+                mFreight,
+                mSoldPrice,
+                mSoldDate
             };
         }
         public static Dictionary<int, string> EditionKeyIndex = new Dictionary<int, string>
         {
-            {0,"首刷"},
-            {1,"首刷限定"},
-            {2,"首刷+书腰"},
-            {3,"再版" },
-            {4, "特别版" }
+            { 0, "首刷" },
+            { 1, "首刷限定" },
+            { 2, "首刷+书腰" },
+            { 3, "再版" },
+            { 4, "特别版" }
         };
         public static Dictionary<string, int> EditionKeyName = new Dictionary<string, int>
         {
-            {"首刷", 0},
-            {"首刷限定", 1},
+            { "首刷", 0},
+            { "首刷限定", 1},
             { "首刷+书腰", 2},
             { "再版", 3 },
             { "特别版", 4 }
         };
         public static Dictionary<int, string> OnBehalfKeyIndex = new Dictionary<int, string>
         {
-            {0, "代购一" },
-            { 1, "代购二"},
-            {2, "代购三" }
-
+            { 0, "代购一" },
+            { 1, "代购二" },
+            { 2, "代购三" }
         };
         public static Dictionary<string, int> OnBehalfKeyName = new Dictionary<string, int>
         {
-            { "代购一", 0},
+            { "代购一", 0 },
             { "代购二", 1 },
-            {"代购三", 2 }
-
+            { "代购三", 2 }
         };
     }
 }

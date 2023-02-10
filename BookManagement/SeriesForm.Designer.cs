@@ -29,7 +29,7 @@
         private void InitializeComponent()
         {
             this.lstvBooks = new System.Windows.Forms.ListView();
-            this.indexInSeries = new System.Windows.Forms.ColumnHeader();
+            this.SeriesIndex = new System.Windows.Forms.ColumnHeader();
             this.edition = new System.Windows.Forms.ColumnHeader();
             this.originalPrice = new System.Windows.Forms.ColumnHeader();
             this.BoughtDate = new System.Windows.Forms.ColumnHeader();
@@ -41,20 +41,21 @@
             this.btnAddRow = new System.Windows.Forms.Button();
             this.txtSeriesName = new System.Windows.Forms.TextBox();
             this.btnDelete = new System.Windows.Forms.Button();
+            this.button1 = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // lstvBooks
             // 
             this.lstvBooks.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
-            this.indexInSeries,
+            this.SeriesIndex,
             this.edition,
             this.originalPrice,
             this.BoughtDate,
             this.OnBehalf,
             this.freight,
-            this.totalCost,
             this.soldPrice,
-            this.SoldDate});
+            this.SoldDate,
+            this.totalCost});
             this.lstvBooks.FullRowSelect = true;
             this.lstvBooks.GridLines = true;
             this.lstvBooks.Location = new System.Drawing.Point(12, 54);
@@ -65,9 +66,9 @@
             this.lstvBooks.UseCompatibleStateImageBehavior = false;
             this.lstvBooks.View = System.Windows.Forms.View.Details;
             // 
-            // indexInSeries
+            // SeriesIndex
             // 
-            this.indexInSeries.Text = "序号";
+            this.SeriesIndex.Text = "系列序号";
             // 
             // edition
             // 
@@ -88,49 +89,62 @@
             // freight
             // 
             this.freight.Text = "邮费";
-            // 
-            // totalCost
-            // 
-            this.totalCost.Text = "总成本";
-            // 
             // soldPrice
-            // 
+            //
             this.soldPrice.Text = "出售价格";
             // 
             // SoldDate
-            // 
+            //
             this.SoldDate.Text = "出售日期";
+            // 
+            // totalCost
+            //
+            this.totalCost.Text = "总成本";
+            // 
             // 
             // btnAddRow
             // 
-            this.btnAddRow.Location = new System.Drawing.Point(432, 12);
+            this.btnAddRow.Location = new System.Drawing.Point(387, 12);
             this.btnAddRow.Name = "btnAddRow";
-            this.btnAddRow.Size = new System.Drawing.Size(75, 23);
+            this.btnAddRow.Size = new System.Drawing.Size(60, 23);
             this.btnAddRow.TabIndex = 1;
             this.btnAddRow.Text = "新增";
             this.btnAddRow.UseVisualStyleBackColor = true;
+            this.btnAddRow.Click += new System.EventHandler(this.btnAddRow_Click);
             // 
             // txtSeriesName
             // 
             this.txtSeriesName.Location = new System.Drawing.Point(12, 12);
             this.txtSeriesName.Name = "txtSeriesName";
-            this.txtSeriesName.Size = new System.Drawing.Size(329, 23);
+            this.txtSeriesName.Size = new System.Drawing.Size(309, 23);
             this.txtSeriesName.TabIndex = 2;
             // 
             // btnDelete
             // 
-            this.btnDelete.Location = new System.Drawing.Point(513, 12);
+            this.btnDelete.Location = new System.Drawing.Point(453, 12);
             this.btnDelete.Name = "btnDelete";
-            this.btnDelete.Size = new System.Drawing.Size(75, 23);
+            this.btnDelete.Size = new System.Drawing.Size(60, 23);
             this.btnDelete.TabIndex = 3;
             this.btnDelete.Text = "删除";
             this.btnDelete.UseVisualStyleBackColor = true;
+            this.btnDelete.Click += new System.EventHandler(this.btnDelete_Click);
+            // 
+            // button1
+            // 
+            this.button1.Location = new System.Drawing.Point(535, 12);
+            this.button1.Name = "button1";
+            this.button1.Size = new System.Drawing.Size(60, 23);
+            this.button1.TabIndex = 4;
+            this.button1.Text = "出售";
+            this.button1.UseVisualStyleBackColor = true;
+            this.button1.Click += new System.EventHandler(this.button1_Click);
             // 
             // SeriesForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 17F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(620, 315);
+            this.Controls.Add(this.button1);
             this.Controls.Add(this.btnDelete);
             this.Controls.Add(this.txtSeriesName);
             this.Controls.Add(this.btnAddRow);
@@ -145,7 +159,7 @@
         #endregion
 
         private ListView lstvBooks;
-        private ColumnHeader indexInSeries;
+        private ColumnHeader SeriesIndex;
         private ColumnHeader edition;
         private ColumnHeader originalPrice;
         private ColumnHeader BoughtDate;
@@ -157,5 +171,6 @@
         private ColumnHeader totalCost;
         private TextBox txtSeriesName;
         private Button btnDelete;
+        private Button button1;
     }
 }

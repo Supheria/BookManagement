@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -13,10 +14,41 @@ namespace BookManagement
 {
     public partial class BookForm : Form
     {
-        public CBook mBook;
-        public BookForm()
+        public enum FormMode
+        {
+            ADD,
+            SELL
+        }
+        SeriesForm mSeriesForm;
+        FormMode mMode;
+        CBook mBook;
+        public BookForm(SeriesForm seriesForm, FormMode mode, CBook book)
         {
             InitializeComponent();
+            mSeriesForm = seriesForm;
+            mMode = mode;
+            mBook = book;
+        }
+
+        private void btnSave_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                mBook = new CBook(
+                    txtSeriesIndex.Text,
+                    cbbEdition.SelectedIndex,
+                    txtOriginalPrice.Text,
+                    dtpBoughtDate.Text,
+                    cbbOnBehalf.SelectedIndex,
+                    txtFreight.Text
+                    );
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"{ex.Message}\n无法添加书目");
+                return;
+            }
+            mSeriesForm.AddListView(mBook);
         }
     }
     /// <summary>
@@ -25,44 +57,99 @@ namespace BookManagement
     public class CBook
     {
         /// <summary>
-        /// 在套装中的序号
+        /// 系列序号
         /// </summary>
-        int mIndexInSeries = 0;
-        [XmlElement("series-index")]
-        public int IndexInSeries
+        string mSeriesIndex = "0";
+        [XmlElement("series-number")]
+        public string SeriesIndex
         {
-            get { return mIndexInSeries; }
-            set { mIndexInSeries = value; }
+            get { return mSeriesIndex; }
+            set { mSeriesIndex = value == string.Empty ? mSeriesIndex : value ; }
         }
         /// <summary>
         /// 版本类型
         /// </summary>
-        eEdition mEdition;
+        string mEdition = string.Empty;
         [XmlElement("edition")]
-        public eEdition Edition
+        public int Edition
         {
-            get { return mEdition; }
-            set { mEdition = value; }
+            get
+            { return EditionKeyName[mEdition]; }
+            set
+            {
+                mEdition = value == -1 ? throw new Exception("没有选择版本！") : EditionsKeyIndex[value];
+                UpdateData();
+            }
         }
         /// <summary>
         /// 定价
         /// </summary>
-        int mOriginalPrice;
+        string mOriginalPrice = string.Empty;
         [XmlElement("original-price")]
-        public int OriginalPrice
+        public string OriginalPrice
         {
             get { return mOriginalPrice; }
-            set { mOriginalPrice = value; }
+            set
+            {
+                mOriginalPrice = value == string.Empty ? throw new Exception("定价不能为空！") : value;
+                UpdateData();
+            }
         }
         /// <summary>
         /// 购买日期
         /// </summary>
-        string mBoughtDate;
-        [XmlElement("add-time")]
+        string mBoughtDate = string.Empty;
+        [XmlElement("bought-time")]
         public string BoughtDate
         {
-            get { return mBoughtDate; }
-            set { mBoughtDate = value; }
+            get { return mOriginalPrice; }
+            set
+            {
+                mBoughtDate = value;
+                UpdateData();
+            }
+        }
+        /// <summary>
+        /// 代购索引
+        /// </summary>
+        string mOnBehalf = string.Empty;
+        [XmlElement("on-behalf-index")]
+        public int OnBehalfIndex
+        {
+            get { return OnBehalfKeyName[mOnBehalf]; }
+            set
+            {
+                mOnBehalf = value == -1 ? throw new Exception("没有选择代购！") : OnBehalfKeyIndex[value];
+                UpdateData();
+            }
+        }
+        /// <summary>
+        /// 邮费
+        /// </summary>
+        string mFreight = "0";
+        [XmlElement("freight")]
+        public string Freight
+        {
+            get { return mFreight; }
+            set
+            {
+                mFreight = value == string.Empty ? mFreight : value;
+                UpdateData();
+            }
+        }
+        /// <summary>
+        /// 出售价格
+        /// </summary>
+        string mSoldPrice = string.Empty;
+        [XmlElement("sold-price")]
+        public string SoldPrice
+        {
+            get { return mSoldPrice; }
+            set
+            {
+                mSoldPrice = value == string.Empty ? throw new Exception("售价不能为空！") : value;
+                UpdateData();
+            }
         }
         /// <summary>
         /// 出售日期
@@ -72,70 +159,71 @@ namespace BookManagement
         public string SoldDate
         {
             get { return mSoldDate; }
-            set { mSoldDate = value; }
+            set
+            {
+                mSoldDate = value;
+                UpdateData();
+            }
         }
-        /// <summary>
-        /// 出售价格
-        /// </summary>
-        double mSoldPrice = -1f;
-        [XmlElement("sold-price")]
-        public double SoldPrice
-        {
-            get { return mSoldPrice; }
-            set { mSoldPrice = value; }
-        }
-        /// <summary>
-        /// 代购索引
-        /// </summary>
-        int mIndexOfOnBehalf;
-        [XmlElement("behalf-index")]
-        public int IndexOfOnBehalf
-        {
-            get { return mIndexOfOnBehalf; }
-            set { mIndexOfOnBehalf = value; }
-        }
-        /// <summary>
-        /// 运费
-        /// </summary>
-        int mFreight;
-        public int Freight
-        {
-            get { return mFreight; }
-            set { mFreight = value; }
-        }
+
+        public List<string> Data { get; private set; } = new List<string>();
         public CBook() { }
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="edition">版本类型</param>
-        /// <param name="originalPrice">定价</param>
-        /// <param name="boughtDate">添加时间</param>
-        /// <param name="indexOfOnBehalf">代购索引</param>
-        /// <param name="indexInSeries">在套装中的序号，默认为0</param>
         public CBook(
-            eEdition edition,
-            int originalPrice,
+            string seriesIndex,
+            int edition,
+            string originalPrice,
             string boughtDate,
-            int indexOfOnBehalf,
-            int indexInSeries = 0
+            int onBehalfIndex,
+            string freight
             )
         {
-            mEdition = edition;
-            mOriginalPrice = originalPrice;
-            mBoughtDate = boughtDate;
-            mIndexOfOnBehalf = indexOfOnBehalf;
-            mIndexInSeries = indexInSeries;
+            SeriesIndex = seriesIndex.Trim();
+            Edition = edition;
+            OriginalPrice = originalPrice.Trim();
+            BoughtDate = boughtDate.Trim();
+            OnBehalfIndex = onBehalfIndex.ToString();
+            Freight = freight.Trim();
         }
-    }
-    /// <summary>
-    /// 版本
-    /// </summary>
-    public enum eEdition
-    {
-        REPRT, // 再版
-        FIRST, // 首刷
-        FIRST_LIMIT, // 首刷限定
-        FIRST_WAIST, // 手刷书腰
-        ESPEC, // 特别版
+        private void UpdateData()
+        {
+            Data = new List<string>()
+            {
+                mEdition,
+                mOriginalPrice,
+                mBoughtDate,
+                mOnBehalfIndex,
+                mFreight
+            };
+        }
+        public static Dictionary<int, string> EditionKeyIndex = new Dictionary<int, string>
+        {
+            {0,"首刷"},
+            {1,"首刷限定"},
+            {2,"首刷+书腰"},
+            {3,"再版" },
+            {4, "特别版" }
+        };
+        public static Dictionary<string, int> EditionKeyName = new Dictionary<string, int>
+        {
+            {"首刷", 0},
+            {"首刷限定", 1},
+            { "首刷+书腰", 2},
+            { "再版", 3 },
+            { "特别版", 4 }
+        };
+        public static Dictionary<int, string> OnBehalfKeyIndex = new Dictionary<int, string>
+        {
+            {0, "代购一" },
+            { 1, "代购二"},
+            {2, "代购三" }
+
+        };
+        public static Dictionary<string, int> OnBehalfKeyName = new Dictionary<string, int>
+        {
+            { "代购一", 0},
+            { "代购二", 1 },
+            {"代购三", 2 }
+
+        };
     }
 }

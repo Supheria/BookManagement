@@ -13,10 +13,48 @@ namespace BookManagement
 {
     public partial class SeriesForm : Form
     {
-        public CSeries mSeries;
+        public CSeries mSeries = new CSeries();
         public SeriesForm()
         {
             InitializeComponent();
+        }
+
+        public void AddListView(CBook book)
+        {
+            int[] width = new int[9];
+            for (int i = 0; i < width.Length; i++)
+            {
+                width[i] = lstvBooks.Columns[i].Width;
+            }
+            ListViewItem item = new ListViewItem();
+            // 设置行标题
+            item.Text = book.SeriesIndex.ToString();
+            // 特定版本的数量
+            foreach (var data in book.Data)
+            {
+                item.SubItems.Add(data);
+            }
+            int totalCost = 999;
+            item.SubItems.Add(totalCost.ToString());
+            lstvBooks.Items.Add(item);
+
+            lstvBooks.Update();
+        }
+
+        private void btnAddRow_Click(object sender, EventArgs e)
+        {
+            BookForm form = new BookForm(this,BookForm.FormMode.ADD, new CBook());
+            form.Show();
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void btnDelete_Click(object sender, EventArgs e)
+        {
+
         }
     }
     /// <summary>

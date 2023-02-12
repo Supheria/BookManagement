@@ -28,7 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.lbeIndex = new System.Windows.Forms.Label();
+            this.lbeSeriesIndex = new System.Windows.Forms.Label();
             this.txtSeriesIndex = new System.Windows.Forms.TextBox();
             this.lbeEdition = new System.Windows.Forms.Label();
             this.lbeOriginalPrice = new System.Windows.Forms.Label();
@@ -47,14 +47,14 @@
             this.lbeSoldDate = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
-            // lbeIndex
+            // lbeSeriesIndex
             // 
-            this.lbeIndex.AutoSize = true;
-            this.lbeIndex.Location = new System.Drawing.Point(28, 12);
-            this.lbeIndex.Name = "lbeIndex";
-            this.lbeIndex.Size = new System.Drawing.Size(32, 17);
-            this.lbeIndex.TabIndex = 0;
-            this.lbeIndex.Text = "序号";
+            this.lbeSeriesIndex.AutoSize = true;
+            this.lbeSeriesIndex.Location = new System.Drawing.Point(28, 12);
+            this.lbeSeriesIndex.Name = "lbeSeriesIndex";
+            this.lbeSeriesIndex.Size = new System.Drawing.Size(32, 17);
+            this.lbeSeriesIndex.TabIndex = 0;
+            this.lbeSeriesIndex.Text = "序号";
             // 
             // txtSeriesIndex
             // 
@@ -103,10 +103,6 @@
             // 
             this.cbbOnBehalf.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cbbOnBehalf.FormattingEnabled = true;
-            this.cbbOnBehalf.Items.AddRange(new object[] {
-            "代购一",
-            "代购二",
-            "代购三"});
             this.cbbOnBehalf.Location = new System.Drawing.Point(66, 72);
             this.cbbOnBehalf.Name = "cbbOnBehalf";
             this.cbbOnBehalf.Size = new System.Drawing.Size(110, 25);
@@ -143,12 +139,6 @@
             // 
             this.cbbEdition.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cbbEdition.FormattingEnabled = true;
-            this.cbbEdition.Items.AddRange(new object[] {
-            "再版",
-            "首刷",
-            "首刷限定",
-            "手刷+书腰",
-            "特别版"});
             this.cbbEdition.Location = new System.Drawing.Point(66, 41);
             this.cbbEdition.Name = "cbbEdition";
             this.cbbEdition.Size = new System.Drawing.Size(110, 25);
@@ -224,7 +214,7 @@
             this.Controls.Add(this.lbeOriginalPrice);
             this.Controls.Add(this.lbeEdition);
             this.Controls.Add(this.txtSeriesIndex);
-            this.Controls.Add(this.lbeIndex);
+            this.Controls.Add(this.lbeSeriesIndex);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedToolWindow;
             this.Name = "BookForm";
             this.Text = "BookForm";
@@ -235,7 +225,7 @@
 
         #endregion
 
-        public Label lbeIndex;
+        public Label lbeSeriesIndex;
         public TextBox txtSeriesIndex;
         public Label lbeEdition;
         public Label lbeOriginalPrice;

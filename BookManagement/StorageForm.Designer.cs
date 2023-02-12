@@ -51,6 +51,7 @@
             this.lstvSeries.TabIndex = 0;
             this.lstvSeries.UseCompatibleStateImageBehavior = false;
             this.lstvSeries.View = System.Windows.Forms.View.Details;
+            this.lstvSeries.DoubleClick += new System.EventHandler(this.lstvSeries_DoubleClick);
             // 
             // seriesName
             // 

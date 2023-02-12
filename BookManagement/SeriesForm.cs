@@ -1,25 +1,39 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
-using System.Xml.Serialization;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement.TextBox;
+﻿using System.Xml.Serialization;
 
 namespace BookManagement
 {
     public partial class SeriesForm : Form
     {
         public CSeries mSeries = new CSeries();
-        public SeriesForm()
+        public SeriesForm(CSeries? series)
         {
             InitializeComponent();
             this.lstvBooks.AutoResizeColumns(ColumnHeaderAutoResizeStyle.HeaderSize);
             SetTag(this);
+            if (series != null)
+            {
+                mSeries = series;
+                LoadListView();
+            }
+            this.txtSeriesName.Text = this.Text = mSeries.SeriesName;
+        }
+        void LoadListView()
+        {
+            foreach (var book in mSeries.Booklist)
+            {
+                ListViewItem item = new ListViewItem();
+                item.Text = book.SeriesIndex;
+                item.SubItems.Add(book.Edition);
+                item.SubItems.Add(book.OnBehalf);
+                item.SubItems.Add(book.OriginalPrice);
+                item.SubItems.Add(book.BoughtDate);
+                item.SubItems.Add(book.Freight);
+                item.SubItems.Add(book.SoldPrice);
+                item.SubItems.Add(book.SoldDate);
+                item.SubItems.Add(book.TotalCost);
+                lstvBooks.Items.Add(item);
+            }
+            UpdateListView();
         }
         private void SetTag(Control parent)
         {
@@ -35,7 +49,7 @@ namespace BookManagement
         }
         private void ResizeControls(float newWidth, float newHeight, Control parent)
         {
-            foreach(Control child in parent.Controls)
+            foreach (Control child in parent.Controls)
             {
                 if (child.Tag != null)
                 {
@@ -44,7 +58,7 @@ namespace BookManagement
                     child.Height = (int)(float.Parse(tagContent[1]) * newHeight);
                     child.Left = (int)(float.Parse(tagContent[2]) * newWidth);
                     child.Top = (int)(float.Parse(tagContent[3]) * newHeight);
-                    var fontSize = float.Parse(tagContent[4]) * newHeight;
+                    var fontSize = float.Parse(tagContent[4]) * newHeight * 0.8f;
                     child.Font = new Font(child.Font.Name, fontSize, child.Font.Style, child.Font.Unit);
                     if (child.Controls.Count > 0)
                     {
@@ -53,69 +67,70 @@ namespace BookManagement
                 }
             }
         }
-
-        public void AddListView(CBook book)
+        public void EditItem(ListViewItem item, int index)
         {
+            try
+            {
+                this.lstvBooks.Items[index] = item;
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"{ex.Message}/n无法编辑条目。");
+            }
+        }
+        public void AddItem(ListViewItem item)
+        {
+            lstvBooks.Items.Add(item);
+            UpdateListView();
+        }
+        public void UpdateListView()
+        {
+            lstvBooks.AutoResizeColumns(ColumnHeaderAutoResizeStyle.HeaderSize);
             int[] width = new int[9];
             for (int i = 0; i < width.Length; i++)
             {
                 width[i] = lstvBooks.Columns[i].Width;
             }
-            ListViewItem item = new ListViewItem();
-            // 设置行标题
-            item.Text = book.SeriesIndex.ToString();
-            // 特定版本的数量
-            foreach (var data in book.Data)
+            foreach (var item in lstvBooks.Items)
             {
-                item.SubItems.Add(data);
-            }
-            int totalCost = 999;
-            item.SubItems.Add(totalCost.ToString());
-            lstvBooks.Items.Add(item);
-            for (int i = 0; i < width.Length; i++)
-            {
-                lstvBooks.AutoResizeColumns(ColumnHeaderAutoResizeStyle.HeaderSize);
-                width[i] = width[i] > lstvBooks.Columns[i].Width ? width[i] : lstvBooks.Columns[i].Width;
-                lstvBooks.Columns[i].Width = width[i];
+                for (int i = 0; i < width.Length; i++)
+                {
+                    width[i] = width[i] > lstvBooks.Columns[i].Width ? width[i] : lstvBooks.Columns[i].Width;
+                    lstvBooks.Columns[i].Width = width[i];
+                }
             }
             lstvBooks.Update();
         }
-
-        public CBook ReadListView()
-        {
-            var item = lstvBooks.FocusedItem;
-            var subItems = item.SubItems;
-            CBook book = new CBook(
-                subItems[0].Text,
-                subItems[1].Text,
-                subItems[2].Text,
-                subItems[3].Text,
-                subItems[4].Text,
-                subItems[5].Text,
-                subItems[6].Text,
-                subItems[7].Text);
-            return book;
-        }
-
         private void btnAddRow_Click(object sender, EventArgs e)
         {
-            BookForm form = new BookForm(this, new CBook());
+            BookForm form = new BookForm(this, new ListViewItem());
             form.Show();
         }
-
-        private void button1_Click(object sender, EventArgs e)
-        {
-
-        }
-
         private void btnDelete_Click(object sender, EventArgs e)
         {
-
+            if (lstvBooks.SelectedItems.Count == 0)
+            {
+                return;
+            }
+            if (MessageBox.Show("确定删除所有选中项吗？", "提示", MessageBoxButtons.YesNo) == DialogResult.No)
+            {
+                return;
+            }
+            foreach (ListViewItem sel in lstvBooks.SelectedItems)
+            {
+                sel.Remove();
+            }
+            UpdateListView();
         }
 
         private void lstvBooks_DoubleClick(object sender, EventArgs e)
         {
-            BookForm form = new BookForm(this, ReadListView());
+            var item = lstvBooks.FocusedItem;
+            if (item == null)
+            {
+                return;
+            }
+            BookForm form = new BookForm(this, item);
             form.Show();
         }
 
@@ -131,6 +146,41 @@ namespace BookManagement
                 this.Invalidate();
             }
         }
+
+        private void SeriesForm_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            if (lstvBooks.Items.Count == 0)
+            {
+                return;
+            }
+            if (mSeries.SeriesName == string.Empty)
+            {
+                MessageBox.Show("还没有输入书名！");
+                e.Cancel = true;
+                return;
+            }
+            mSeries.Clear();
+            foreach (ListViewItem item in lstvBooks.Items)
+            {
+                CBook book = new CBook();
+                var subItems = item.SubItems;
+                book.SeriesIndex = subItems[0].Text;
+                book.Edition = subItems[1].Text;
+                book.OnBehalf = subItems[2].Text;
+                book.OriginalPrice = subItems[3].Text;
+                book.BoughtDate = subItems[4].Text;
+                book.Freight = subItems[5].Text;
+                book.SoldPrice = subItems[6].Text;
+                book.SoldDate = subItems[7].Text;
+                book.TotalCost = subItems[8].Text;
+                mSeries.Add(book);
+            }
+        }
+
+        private void txtSeriesName_TextChanged(object sender, EventArgs e)
+        {
+            this.Text = mSeries.SeriesName = txtSeriesName.Text;
+        }
     }
     /// <summary>
     /// 套装类
@@ -140,7 +190,7 @@ namespace BookManagement
         /// <summary>
         /// 套装名称
         /// </summary>
-        string mSeriesName;
+        string mSeriesName = string.Empty;
         [XmlElement("series-name")]
         public string SeriesName
         {
@@ -178,6 +228,10 @@ namespace BookManagement
             {
                 mBooklist.Add(bk);
             }
+        }
+        public void Clear()
+        {
+            mBooklist = new List<CBook>();
         }
     }
 }

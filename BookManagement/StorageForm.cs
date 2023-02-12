@@ -1,13 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
+﻿using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
-using System.Windows.Forms;
 using System.Xml;
 using System.Xml.Serialization;
 
@@ -16,7 +8,7 @@ namespace BookManagement
     public partial class StorageForm : Form
     {
         CBookStorage mStorage = new CBookStorage();
-        
+
         public StorageForm()
         {
             InitializeComponent();
@@ -24,10 +16,11 @@ namespace BookManagement
         public void UpateListView()
         {
             lstvSeries.Items.Clear();
-            int[] width = new int[] { 
-                lstvSeries.Columns[0].Width,
-                lstvSeries.Columns[1].Width 
-            };
+            int[] width = new int[2];
+            for (int i = 0; i < width.Length; i++)
+            {
+                width[i] = lstvSeries.Columns[i].Width;
+            }
             foreach (var series in mStorage.SeriesList)
             {
                 ListViewItem item = new ListViewItem();
@@ -144,9 +137,30 @@ namespace BookManagement
 
         private void btnAddRow_Click(object sender, EventArgs e)
         {
-            SeriesForm seriesForm = new SeriesForm();
+            SeriesForm seriesForm = new SeriesForm(null);
+            this.Hide();
             seriesForm.ShowDialog();
+            this.Show();
+            if (seriesForm.mSeries.Booklist.Count == 0)
+            {
+                return;
+            }
             mStorage.Add(seriesForm.mSeries);
+            UpateListView();
+        }
+
+        private void lstvSeries_DoubleClick(object sender, EventArgs e)
+        {
+            int index = lstvSeries.FocusedItem.Index;
+            if (index == -1)
+            {
+                return;
+            }
+            SeriesForm seriesForm = new SeriesForm(mStorage.SeriesList[index]);
+            this.Hide();
+            seriesForm.ShowDialog();
+            this.Show();
+            mStorage.SeriesList[index] = seriesForm.mSeries;
             UpateListView();
         }
     }
@@ -175,7 +189,7 @@ namespace BookManagement
         public CBookStorage() { }
         public CBookStorage(params CSeries[] series)
         {
-            foreach(var sr in series)
+            foreach (var sr in series)
             {
                 mSeriesList.Add(sr);
             }

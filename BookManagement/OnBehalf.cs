@@ -1,17 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace BookManagement
+﻿namespace BookManagement
 {
     public static class OnBehalf
     {
         /// <summary>
         /// 当前汇率
         /// </summary>
-        public static double EXCHANGE_RATE;
+        public static double EXCHANGE_RATE = 2.5;
         public delegate int DelOnBehalf(int originalPrice);
         public static DelOnBehalf[] OnBehalfs = new DelOnBehalf[]
         {

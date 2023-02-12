@@ -1,8 +1,5 @@
 ﻿
 using BookManagement;
-using System.Text;
-using System.Xml;
-using System.Xml.Serialization;
 //using static System.Net.Mime.MediaTypeNames;
 
 internal static class Program

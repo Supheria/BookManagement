@@ -1,78 +1,116 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
-using System.Xml.Serialization;
+﻿using System.Xml.Serialization;
 
 namespace BookManagement
 {
     public partial class BookForm : Form
     {
-        public enum FormMode
-        {
-            ADD,
-            SELL
-        }
         SeriesForm mSeriesForm;
-        bool mDoSell;
-        CBook mBook;
-        public BookForm(SeriesForm seriesForm, CBook book, bool DoSell = false)
+        ListViewItem mItem;
+        public BookForm(SeriesForm seriesForm, ListViewItem item)
         {
             InitializeComponent();
-            mSeriesForm = seriesForm;
-            mBook = book;
-            if (!DoSell)
+            foreach (var keyIndex in EditionKeyIndex)
             {
-                txtSoldPrice.Visible = false;
-                dtpSoldDate.Visible = false;
-                lbeSoldPrice.Visible = false;
-                lbeSoldDate.Visible = false;
+                cbbEdition.Items.Add(keyIndex.Value);
+            }
+            foreach (var keyIndex in OnBehalfKeyIndex)
+            {
+                cbbOnBehalf.Items.Add(keyIndex.Value);
+            }
+            mSeriesForm = seriesForm;
+            if (item.Index == -1)
+            {
+                this.Text = "新增...";
+                mItem = new ListViewItem();
+                txtSoldPrice.Visible = false; lbeSoldPrice.Visible = false;
+                dtpSoldDate.Visible = false; lbeSoldDate.Visible = false;
                 btnSave.Location = new Point(btnSave.Location.X, btnSave.Location.Y - (dtpSoldDate.Bottom - txtFreight.Bottom));
                 this.Height = this.Height - (dtpSoldDate.Bottom - txtFreight.Bottom);
             }
+            else
+            {
+                this.Text = $"{(seriesForm.Text == string.Empty ? "?" : seriesForm.Text)} - 第 {item.Text} 册";
+                mItem = item;
+                LoadItem();
+            }
+        }
+
+        public void LoadItem()
+        {
+            var subItems = mItem.SubItems;
+            #region ==== item读入控件 ====
+            txtSeriesIndex.Text = subItems[0].Text;
+            cbbEdition.SelectedIndex = EditionKeyName[subItems[1].Text];
+            cbbOnBehalf.SelectedIndex = OnBehalfKeyName[subItems[2].Text];
+            txtOriginalPrice.Text = subItems[3].Text;
+            dtpBoughtDate.Value = DateTime.Parse(subItems[4].Text);
+            txtFreight.Text = subItems[5].Text;
+            txtSoldPrice.Text = subItems[6].Text;
+            dtpSoldDate.Value = subItems[7].Text == string.Empty ? dtpSoldDate.Value : DateTime.Parse(subItems[7].Text);
+            #endregion
         }
 
         private void btnSave_Click(object sender, EventArgs e)
         {
-
+            if (mItem.Index != -1)
+            {
+                #region ==== 修改item ====
+                mItem.SubItems[0].Text = txtSeriesIndex.Text == string.Empty ? "1" : txtSeriesIndex.Text;
+                mItem.SubItems[1].Text = (cbbEdition.SelectedIndex == -1 ? throw new Exception("没有选择版本！") : EditionKeyIndex[cbbEdition.SelectedIndex]);
+                mItem.SubItems[2].Text = (cbbOnBehalf.SelectedIndex == -1 ? throw new Exception("没有选择代购！") : OnBehalfKeyIndex[cbbOnBehalf.SelectedIndex]);
+                mItem.SubItems[3].Text = (txtOriginalPrice.Text == string.Empty ? throw new Exception("定价不能为空！") : txtOriginalPrice.Text);
+                mItem.SubItems[4].Text = (dtpBoughtDate.Value.ToShortDateString());
+                mItem.SubItems[5].Text = (txtFreight.Text == string.Empty ? "1" : txtFreight.Text);
+                mItem.SubItems[6].Text = (txtSoldPrice.Text);
+                mItem.SubItems[7].Text = (txtSoldPrice.Text == string.Empty ? string.Empty : dtpSoldDate.Value.ToShortDateString());
+                mItem.SubItems[8].Text = SumTotalCost();
+                #endregion
+                mSeriesForm.UpdateListView();
+                this.Close();
+                return;
+            }
             try
             {
-                mBook = new CBook(
-                    txtSeriesIndex.Text,
-                    EditionKeyIndex[cbbEdition.SelectedIndex],
-                    txtOriginalPrice.Text,
-                    dtpBoughtDate.Text,
-                    OnBehalfKeyIndex[cbbOnBehalf.SelectedIndex],
-                    txtFreight.Text,
-                    mDoSell == true ? txtSoldPrice.Text : "",
-                    mDoSell == true ? dtpSoldDate.Text : ""
-                    ); ;
+                #region ==== 新item ====
+                mItem.Text = txtSeriesIndex.Text == string.Empty ? "0" : txtSeriesIndex.Text;
+                mItem.SubItems.Add(cbbEdition.SelectedIndex == -1 ? throw new Exception("没有选择版本！") : EditionKeyIndex[cbbEdition.SelectedIndex]);
+                mItem.SubItems.Add(cbbOnBehalf.SelectedIndex == -1 ? throw new Exception("没有选择代购！") : OnBehalfKeyIndex[cbbOnBehalf.SelectedIndex]);
+                mItem.SubItems.Add(txtOriginalPrice.Text == string.Empty ? throw new Exception("定价不能为空！") : txtOriginalPrice.Text);
+                mItem.SubItems.Add(dtpBoughtDate.Value.ToShortDateString());
+                mItem.SubItems.Add(txtFreight.Text == string.Empty ? "1" : txtFreight.Text);
+                mItem.SubItems.Add(string.Empty);
+                mItem.SubItems.Add(string.Empty);
+                mItem.SubItems.Add(SumTotalCost());
+                #endregion
             }
             catch (Exception ex)
             {
-                if(ex.Message == "The given key '-1' was not present in the dictionary.")
-                {
-                    MessageBox.Show(cbbEdition.SelectedIndex == -1 ? "没有选择版本！" : cbbOnBehalf.SelectedIndex == -1 ? "没有选择代购！" : ex.Message);
-                }
-                else
-                    MessageBox.Show($"{ex.Message}");
+                mItem = new ListViewItem();
+                MessageBox.Show(ex.Message);
                 return;
             }
-            mSeriesForm.AddListView(mBook);
+            mSeriesForm.AddItem(mItem);
+            mItem = new ListViewItem();
         }
+
+        public string SumTotalCost()
+        {
+            int originalPrice = int.Parse(mItem.SubItems[3].Text);
+            int index = OnBehalfKeyName[mItem.SubItems[2].Text];
+            int freiht = int.Parse(mItem.SubItems[5].Text);
+            int OnBehalfCost = OnBehalf.OnBehalfs[index](originalPrice);
+            int totalCost = originalPrice + OnBehalfCost + freiht;
+            return totalCost.ToString() + $"，含代购￥{OnBehalf.OnBehalfs[index](originalPrice)}";
+        }
+        #region ==== Dictionary ====
         public static Dictionary<int, string> EditionKeyIndex = new Dictionary<int, string>
         {
             { 0, "首刷" },
             { 1, "首刷限定" },
             { 2, "首刷+书腰" },
             { 3, "再版" },
-            { 4, "特别版" }
+            { 4, "特别版" },
+            { 5, "？" }
         };
         public static Dictionary<string, int> EditionKeyName = new Dictionary<string, int>
         {
@@ -80,21 +118,27 @@ namespace BookManagement
             { "首刷限定", 1},
             { "首刷+书腰", 2},
             { "再版", 3 },
-            { "特别版", 4 }
+            { "特别版", 4 },
+            { "？", 5 },
+            { string.Empty, -1 }
         };
         public static Dictionary<int, string> OnBehalfKeyIndex = new Dictionary<int, string>
         {
             { 0, "代购一" },
             { 1, "代购二" },
-            { 2, "代购三" }
+            { 2, "代购三" },
+            { 3, "？" }
         };
         public static Dictionary<string, int> OnBehalfKeyName = new Dictionary<string, int>
         {
             { "代购一", 0 },
             { "代购二", 1 },
-            { "代购三", 2 }
+            { "代购三", 2 },
+            { "？", 5 },
+            { string.Empty, -1 }
         };
-
+        #endregion
+        #region ==== 只允许输入数字
         private void txtSeriesIndex_KeyPress(object sender, KeyPressEventArgs e)
         {
             // e.KeyChar == (char)8 是退格键
@@ -127,6 +171,7 @@ namespace BookManagement
                 e.Handled = true;
             }
         }
+        #endregion
     }
     /// <summary>
     /// 图书类
@@ -141,7 +186,7 @@ namespace BookManagement
         public string SeriesIndex
         {
             get { return mSeriesIndex; }
-            set { mSeriesIndex = value == string.Empty ? mSeriesIndex : value ; }
+            set { mSeriesIndex = value; }
         }
         /// <summary>
         /// 版本类型
@@ -151,10 +196,7 @@ namespace BookManagement
         public string Edition
         {
             get { return mEdition; }
-            set
-            {
-                mEdition = value;
-            }
+            set { mEdition = value; }
         }
         /// <summary>
         /// 定价
@@ -164,11 +206,7 @@ namespace BookManagement
         public string OriginalPrice
         {
             get { return mOriginalPrice; }
-            set
-            {
-                mOriginalPrice = value == string.Empty ? throw new Exception("定价不能为空！") : value;
-                UpdateData();
-            }
+            set { mOriginalPrice = value; }
         }
         /// <summary>
         /// 购买日期
@@ -177,12 +215,8 @@ namespace BookManagement
         [XmlElement("bought-time")]
         public string BoughtDate
         {
-            get { return mOriginalPrice; }
-            set
-            {
-                mBoughtDate = value;
-                UpdateData();
-            }
+            get { return mBoughtDate; }
+            set { mBoughtDate = value; }
         }
         /// <summary>
         /// 代购
@@ -192,11 +226,7 @@ namespace BookManagement
         public string OnBehalf
         {
             get { return mOnBehalf; }
-            set
-            {
-                mOnBehalf = value;
-                UpdateData();
-            }
+            set { mOnBehalf = value; }
         }
         /// <summary>
         /// 邮费
@@ -206,11 +236,7 @@ namespace BookManagement
         public string Freight
         {
             get { return mFreight; }
-            set
-            {
-                mFreight = value == string.Empty ? mFreight : value;
-                UpdateData();
-            }
+            set { mFreight = value; }
         }
         /// <summary>
         /// 出售价格
@@ -220,11 +246,7 @@ namespace BookManagement
         public string SoldPrice
         {
             get { return mSoldPrice; }
-            set
-            {
-                mSoldPrice = value;
-                UpdateData();
-            }
+            set { mSoldPrice = value; }
         }
         /// <summary>
         /// 出售日期
@@ -234,48 +256,18 @@ namespace BookManagement
         public string SoldDate
         {
             get { return mSoldDate; }
-            set
-            {
-                mSoldDate = value;
-                UpdateData();
-            }
+            set { mSoldDate = value; }
         }
-
-        public List<string> Data { get; private set; } = new List<string>();
+        /// <summary>
+        /// 总成本
+        /// </summary>
+        string mTotalCost = string.Empty;
+        [XmlElement("total-cost")]
+        public string TotalCost
+        {
+            get { return mTotalCost; }
+            set { mTotalCost = value; }
+        }
         public CBook() { }
-        public CBook(
-            string seriesIndex,
-            string edition,
-            string originalPrice,
-            string boughtDate,
-            string onBehalf,
-            string freight,
-            string soldPrice,
-            string soldDate
-            )
-        {
-            SeriesIndex = seriesIndex.Trim();
-            Edition = edition.Trim();
-            OriginalPrice = originalPrice.Trim();
-            BoughtDate = boughtDate.Trim();
-            OnBehalf = onBehalf.Trim();
-            Freight = freight.Trim();
-            SoldPrice = soldPrice.Trim();
-            SoldDate = soldDate.Trim();
-        }
-        private void UpdateData()
-        {
-            Data = new List<string>()
-            {
-                mEdition,
-                mOriginalPrice,
-                mBoughtDate,
-                mOnBehalf,
-                mFreight,
-                mSoldPrice,
-                mSoldDate
-            };
-        }
-        
     }
 }

@@ -12,15 +12,11 @@ namespace BookManagement
         public StorageForm()
         {
             InitializeComponent();
+            ResizeForm.SetTag(this);
         }
         public void UpateListView()
         {
             lstvSeries.Items.Clear();
-            int[] width = new int[2];
-            for (int i = 0; i < width.Length; i++)
-            {
-                width[i] = lstvSeries.Columns[i].Width;
-            }
             foreach (var series in mStorage.SeriesList)
             {
                 ListViewItem item = new ListViewItem();
@@ -29,14 +25,21 @@ namespace BookManagement
                 // 特定版本的数量
                 item.SubItems.Add(string.Format($"全部版本：{series.Booklist.Count}本"));
                 lstvSeries.Items.Add(item);
-                // 设置列宽为文本长度
-                lstvSeries.Columns[0].Width = -1;
-                lstvSeries.Columns[1].Width = -1;
-                width[0] = width[0] > lstvSeries.Columns[0].Width ? width[0] : lstvSeries.Columns[0].Width;
-                width[1] = width[1] > lstvSeries.Columns[1].Width ? width[1] : lstvSeries.Columns[1].Width;
             }
-            lstvSeries.Columns[0].Width = width[0];
-            lstvSeries.Columns[1].Width = width[1];
+            lstvSeries.AutoResizeColumns(ColumnHeaderAutoResizeStyle.HeaderSize);
+            int[] width = new int[2];
+            for (int i = 0; i < width.Length; i++)
+            {
+                width[i] = lstvSeries.Columns[i].Width;
+            }
+            foreach (var item in lstvSeries.Items)
+            {
+                for (int i = 0; i < width.Length; i++)
+                {
+                    width[i] = width[i] > lstvSeries.Columns[i].Width ? width[i] : lstvSeries.Columns[i].Width;
+                    lstvSeries.Columns[i].Width = width[i];
+                }
+            }
             lstvSeries.Update();
         }
         #region ==== 文件处理 ====
@@ -162,6 +165,19 @@ namespace BookManagement
             this.Show();
             mStorage.SeriesList[index] = seriesForm.mSeries;
             UpateListView();
+        }
+
+        private void StorageForm_SizeChanged(object sender, EventArgs e)
+        {
+            if (Tag != null)
+            {
+                string[] tagContent = Tag.ToString().Split(" ");
+                float newWidth = this.Width / float.Parse(tagContent[0]);
+                float newHeight = this.Height / float.Parse(tagContent[1]);
+                ResizeForm.ResizeControls(newWidth, newHeight, this);
+                lstvSeries.AutoResizeColumns(ColumnHeaderAutoResizeStyle.HeaderSize);
+                this.Invalidate();
+            }
         }
     }
     /// <summary>

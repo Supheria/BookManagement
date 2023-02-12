@@ -97,6 +97,10 @@ namespace BookManagement
         {
             int originalPrice = int.Parse(mItem.SubItems[3].Text);
             int index = OnBehalfKeyName[mItem.SubItems[2].Text];
+            if(index >= OnBehalf.OnBehalfs.Length)
+            {
+                return string.Empty;
+            }
             int freiht = int.Parse(mItem.SubItems[5].Text);
             int OnBehalfCost = OnBehalf.OnBehalfs[index](originalPrice);
             int totalCost = originalPrice + OnBehalfCost + freiht;
@@ -127,14 +131,14 @@ namespace BookManagement
             { 0, "代购一" },
             { 1, "代购二" },
             { 2, "代购三" },
-            { 3, "？" }
+            { 3, "自购" }
         };
         public static Dictionary<string, int> OnBehalfKeyName = new Dictionary<string, int>
         {
             { "代购一", 0 },
             { "代购二", 1 },
             { "代购三", 2 },
-            { "？", 5 },
+            { "自购", 3 },
             { string.Empty, -1 }
         };
         #endregion
@@ -142,7 +146,7 @@ namespace BookManagement
         private void txtSeriesIndex_KeyPress(object sender, KeyPressEventArgs e)
         {
             // e.KeyChar == (char)8 是退格键
-            if (!(char.IsNumber(e.KeyChar) || e.KeyChar == (char)8))
+            if (!(char.IsNumber(e.KeyChar) || e.KeyChar == (char)8 || e.KeyChar == '-' || e.KeyChar == ','))
             {
                 e.Handled = true;
             }

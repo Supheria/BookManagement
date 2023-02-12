@@ -44,10 +44,11 @@
             this.editionNumber});
             this.lstvSeries.FullRowSelect = true;
             this.lstvSeries.GridLines = true;
-            this.lstvSeries.Location = new System.Drawing.Point(12, 51);
+            this.lstvSeries.Location = new System.Drawing.Point(22, 84);
+            this.lstvSeries.Margin = new System.Windows.Forms.Padding(6, 5, 6, 5);
             this.lstvSeries.MultiSelect = false;
             this.lstvSeries.Name = "lstvSeries";
-            this.lstvSeries.Size = new System.Drawing.Size(320, 249);
+            this.lstvSeries.Size = new System.Drawing.Size(591, 408);
             this.lstvSeries.TabIndex = 0;
             this.lstvSeries.UseCompatibleStateImageBehavior = false;
             this.lstvSeries.View = System.Windows.Forms.View.Details;
@@ -64,9 +65,10 @@
             // 
             // btnLoad
             // 
-            this.btnLoad.Location = new System.Drawing.Point(12, 12);
+            this.btnLoad.Location = new System.Drawing.Point(22, 20);
+            this.btnLoad.Margin = new System.Windows.Forms.Padding(6, 5, 6, 5);
             this.btnLoad.Name = "btnLoad";
-            this.btnLoad.Size = new System.Drawing.Size(75, 23);
+            this.btnLoad.Size = new System.Drawing.Size(139, 38);
             this.btnLoad.TabIndex = 1;
             this.btnLoad.Text = "加载文件...";
             this.btnLoad.UseVisualStyleBackColor = true;
@@ -74,9 +76,10 @@
             // 
             // btnSave
             // 
-            this.btnSave.Location = new System.Drawing.Point(93, 12);
+            this.btnSave.Location = new System.Drawing.Point(173, 20);
+            this.btnSave.Margin = new System.Windows.Forms.Padding(6, 5, 6, 5);
             this.btnSave.Name = "btnSave";
-            this.btnSave.Size = new System.Drawing.Size(75, 23);
+            this.btnSave.Size = new System.Drawing.Size(139, 38);
             this.btnSave.TabIndex = 2;
             this.btnSave.Text = "另存为...";
             this.btnSave.UseVisualStyleBackColor = true;
@@ -84,9 +87,10 @@
             // 
             // btnAddRow
             // 
-            this.btnAddRow.Location = new System.Drawing.Point(211, 12);
+            this.btnAddRow.Location = new System.Drawing.Point(392, 20);
+            this.btnAddRow.Margin = new System.Windows.Forms.Padding(6, 5, 6, 5);
             this.btnAddRow.Name = "btnAddRow";
-            this.btnAddRow.Size = new System.Drawing.Size(49, 23);
+            this.btnAddRow.Size = new System.Drawing.Size(91, 38);
             this.btnAddRow.TabIndex = 3;
             this.btnAddRow.Text = "新增";
             this.btnAddRow.UseVisualStyleBackColor = true;
@@ -94,25 +98,28 @@
             // 
             // btnDeleteRaw
             // 
-            this.btnDeleteRaw.Location = new System.Drawing.Point(266, 12);
+            this.btnDeleteRaw.Location = new System.Drawing.Point(494, 20);
+            this.btnDeleteRaw.Margin = new System.Windows.Forms.Padding(6, 5, 6, 5);
             this.btnDeleteRaw.Name = "btnDeleteRaw";
-            this.btnDeleteRaw.Size = new System.Drawing.Size(49, 23);
+            this.btnDeleteRaw.Size = new System.Drawing.Size(91, 38);
             this.btnDeleteRaw.TabIndex = 4;
             this.btnDeleteRaw.Text = "删除";
             this.btnDeleteRaw.UseVisualStyleBackColor = true;
             // 
             // StorageForm
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 17F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(13F, 28F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(344, 312);
+            this.ClientSize = new System.Drawing.Size(639, 514);
             this.Controls.Add(this.btnDeleteRaw);
             this.Controls.Add(this.btnAddRow);
             this.Controls.Add(this.btnSave);
             this.Controls.Add(this.btnLoad);
             this.Controls.Add(this.lstvSeries);
+            this.Margin = new System.Windows.Forms.Padding(6, 5, 6, 5);
             this.Name = "StorageForm";
             this.Text = "BooksForm";
+            this.SizeChanged += new System.EventHandler(this.StorageForm_SizeChanged);
             this.ResumeLayout(false);
 
         }

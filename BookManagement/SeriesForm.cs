@@ -9,7 +9,7 @@ namespace BookManagement
         {
             InitializeComponent();
             this.lstvBooks.AutoResizeColumns(ColumnHeaderAutoResizeStyle.HeaderSize);
-            SetTag(this);
+            ResizeForm.SetTag(this);
             if (series != null)
             {
                 mSeries = series;
@@ -35,38 +35,7 @@ namespace BookManagement
             }
             UpdateListView();
         }
-        private void SetTag(Control parent)
-        {
-            parent.Tag = parent.Width + " " + parent.Height + " " + parent.Left + " " + parent.Top + " " + parent.Font.Size;
-            foreach (Control child in parent.Controls)
-            {
-                child.Tag = child.Width + " " + child.Height + " " + child.Left + " " + child.Top + " " + child.Font.Size;
-                if (child.Controls.Count > 0)
-                {
-                    SetTag(child);
-                }
-            }
-        }
-        private void ResizeControls(float newWidth, float newHeight, Control parent)
-        {
-            foreach (Control child in parent.Controls)
-            {
-                if (child.Tag != null)
-                {
-                    string[] tagContent = child.Tag.ToString().Split(" ");
-                    child.Width = (int)(float.Parse(tagContent[0]) * newWidth);
-                    child.Height = (int)(float.Parse(tagContent[1]) * newHeight);
-                    child.Left = (int)(float.Parse(tagContent[2]) * newWidth);
-                    child.Top = (int)(float.Parse(tagContent[3]) * newHeight);
-                    var fontSize = float.Parse(tagContent[4]) * newHeight * 0.8f;
-                    child.Font = new Font(child.Font.Name, fontSize, child.Font.Style, child.Font.Unit);
-                    if (child.Controls.Count > 0)
-                    {
-                        ResizeControls(newWidth, newHeight, child);
-                    }
-                }
-            }
-        }
+        
         public void EditItem(ListViewItem item, int index)
         {
             try
@@ -141,7 +110,7 @@ namespace BookManagement
                 string[] tagContent = Tag.ToString().Split(" ");
                 float newWidth = this.Width / float.Parse(tagContent[0]);
                 float newHeight = this.Height / float.Parse(tagContent[1]);
-                ResizeControls(newWidth, newHeight, this);
+                ResizeForm.ResizeControls(newWidth, newHeight, this);
                 lstvBooks.AutoResizeColumns(ColumnHeaderAutoResizeStyle.HeaderSize);
                 this.Invalidate();
             }
